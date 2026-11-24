@@ -21,3 +21,22 @@ export const PLAN_WEEKS = [
   { title: 'Interview loops', focus: 'Interviews. 2 problems/day to stay sharp. Review each round the same evening.', modules: [] },
   { title: 'Offers & negotiation', focus: 'Final rounds, compare offers on 4-year total comp, negotiate.', modules: [] },
 ]
+
+// AI Engineer path: 10 weeks. Run it after the Java plan, or in parallel at ~1 hour/day once you're past week 8 of the Java plan.
+export const AI_PLAN_WEEKS = [
+  { title: 'Python fluency', focus: 'Python syntax and idioms mapped from Java; data structures, typing, OOP.', modules: ['python/01-python-for-java-developers', 'python/02-data-structures-oop-typing'] },
+  { title: 'Production Python', focus: 'async, packaging with uv, pytest, FastAPI; NumPy & pandas basics.', modules: ['python/03-async-packaging-testing-fastapi', 'python/04-numpy-pandas-for-ai'] },
+  { title: 'Machine learning from scratch', focus: 'Supervised learning, loss, gradient descent — play with the AI Lab gradient descent demo.', modules: ['ai/01-ml-fundamentals'] },
+  { title: 'Neural networks', focus: 'Neurons, backprop, training loops; build a tiny network in NumPy.', modules: ['ai/02-neural-networks-deep-learning'] },
+  { title: 'Transformers & LLMs', focus: 'Tokens, embeddings, attention, sampling — use the Lab tokenizer and sampling demos.', modules: ['ai/03-transformers-llms'] },
+  { title: 'Embeddings & RAG', focus: 'Vector search, chunking, retrieval quality; build a mini RAG over your notes.', modules: ['ai/04-embeddings-vector-search-rag', 'coding/08-python-ai-coding'] },
+  { title: 'Prompting, structured outputs & evals', focus: 'Prompt design, JSON outputs, building an eval set.', modules: ['ai/05-prompt-engineering-structured-outputs-evals'] },
+  { title: 'Your first agent', focus: 'Agent loop and tool use; build a working agent with the Claude API.', modules: ['agents/01-what-is-an-agent', 'agents/02-build-agent-python-claude'] },
+  { title: 'Agent architecture & production', focus: 'MCP, memory, multi-agent, guardrails, evals, cost and latency.', modules: ['agents/03-mcp-memory-multi-agent', 'agents/04-production-agents-evals-safety'] },
+  { title: 'AI interviews', focus: 'AI system design cases and the AI interview question bank; ship one portfolio project.', modules: ['agents/05-ai-system-design-cases', 'agents/06-ai-interview-question-bank'] },
+]
+
+export const PLANS = [
+  { id: 'java', name: 'Java Full-Stack · 20 weeks', weeks: PLAN_WEEKS },
+  { id: 'ai', name: 'AI Engineer · 10 weeks', weeks: AI_PLAN_WEEKS },
+]

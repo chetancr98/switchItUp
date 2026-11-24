@@ -81,7 +81,7 @@ export function streak(p) {
 
 /* ---------------- reading preferences ---------------- */
 const PKEY = 'switchitup.prefs.v1'
-const defaultPrefs = { theme: 'auto', font: 'serif', size: 18, width: 'normal' }
+const defaultPrefs = { theme: 'auto', font: 'serif', size: 18, width: 'normal', path: 'all' }
 let prefs = (() => { try { return { ...defaultPrefs, ...JSON.parse(localStorage.getItem(PKEY)) } } catch { return defaultPrefs } })()
 const prefListeners = new Set()
 

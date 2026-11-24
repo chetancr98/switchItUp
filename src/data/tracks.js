@@ -46,7 +46,24 @@ export const TRACKS = [
   { id: 'dsa', name: 'Data Structures & Algorithms', icon: '🧠', color: '#16a34a', desc: 'Pattern-based DSA with Java templates — every pattern FAANG asks.' },
   { id: 'cp', name: 'Competitive Programming', icon: '⚡', color: '#eab308', desc: 'Fast I/O, number theory, advanced techniques, contest strategy.' },
   { id: 'coding', name: 'Coding Q&A', icon: '💻', color: '#0d9488', desc: 'Frequently asked coding questions with full Java/SQL/JS solutions and explanations.' },
+  { id: 'python', name: 'Python for AI', icon: '🐍', color: '#3776ab', desc: 'Python from zero for Java developers: idioms, typing, async, FastAPI, NumPy & pandas.' },
+  { id: 'ai', name: 'AI & LLM Foundations', icon: '🧬', color: '#c026d3', desc: 'ML from scratch, neural networks, transformers, embeddings & RAG, prompting and evals.' },
+  { id: 'agents', name: 'Building AI Agents', icon: '🤖', color: '#ea580c', desc: 'Agent loops and tool use with the Claude API, MCP, memory, multi-agent, production & AI system design.' },
   { id: 'interview', name: 'Interview Playbook', icon: '🎯', color: '#64748b', desc: 'Hiring process, LLD round, behavioral (STAR), resume and negotiation.' },
 ]
 
 export const trackById = Object.fromEntries(TRACKS.map((t) => [t.id, t]))
+
+// Learning paths filter the roadmap and track list on the home page.
+export const PATHS = [
+  { id: 'all', name: 'Everything', icon: '🧭', desc: 'Every track — full-stack engineering plus AI engineering.' },
+  {
+    id: 'java', name: 'Java Full-Stack', icon: '☕', desc: 'Product-company SDE-2 / Senior loops: Java, Spring, React, distributed systems.',
+    tracks: ['java', 'spring', 'sql', 'react', 'microservices', 'devops', 'git', 'system-design', 'dsa', 'cp', 'coding', 'interview'],
+  },
+  {
+    id: 'ai', name: 'AI Engineer', icon: '🤖', desc: 'Build LLM apps and agents: Python, ML/LLM foundations, RAG, agents, AI system design.',
+    tracks: ['python', 'ai', 'agents', 'sql', 'system-design', 'dsa', 'coding', 'git', 'devops', 'interview'],
+  },
+]
+export const pathById = Object.fromEntries(PATHS.map((p) => [p.id, p]))

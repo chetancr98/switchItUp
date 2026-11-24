@@ -50,6 +50,7 @@ export default function Markdown({ source, onToc }) {
     root.querySelectorAll('summary').forEach((s) => {
       if (s.innerHTML.includes('`')) s.innerHTML = s.innerHTML.replace(/`([^`]+)`/g, '<code>$1</code>')
     })
+    root.querySelectorAll('a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener noreferrer' })
     root.querySelectorAll('table').forEach((t) => {
       if (t.parentElement.classList.contains('table-wrap')) return
       const w = document.createElement('div')

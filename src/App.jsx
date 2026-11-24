@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { LEVELS, TRACKS, trackById } from './data/tracks'
-import { PLAN_WEEKS } from './data/plan'
+import { LEVELS, TRACKS, trackById, PATHS, pathById } from './data/tracks'
+import { PLAN_WEEKS, AI_PLAN_WEEKS, PLANS } from './data/plan'
+import { RESOURCES, PLATFORMS } from './data/resources'
+import Lab from './components/Lab'
 import { topics, topicById, topicsOfTrack, topicsOfLevel, pages, search } from './lib/content'
 import { useProgress, usePrefs, streak, dayKey } from './lib/progress'
 import Markdown from './components/Markdown'
@@ -114,16 +116,62 @@ function Heatmap({ log }) {
   )
 }
 
+/* ---------------- Resources ---------------- */
+const KIND_ICON = { practice: '🏋️', interactive: '🧪', docs: '📘', read: '📖', video: '🎬', course: '🎓' }
+function ResourceLink({ r }) {
+  return (
+    <a className="res" href={r.url} target="_blank" rel="noopener noreferrer">
+      <span className="res-icon">{KIND_ICON[r.kind] || '🔗'}</span>
+      <span className="res-label">{r.label}</span>
+      <span className="res-kind">{r.kind}</span>
+    </a>
+  )
+}
+function ResourcesPanel({ id }) {
+  const list = RESOURCES[id]
+  if (!list?.length) return null
+  return (
+    <section className="res-panel">
+      <h3>Practice & go deeper</h3>
+      <p className="muted small">Hands-on platforms and trusted references for this module. Opens in a new tab.</p>
+      <div className="res-grid">{list.map((r) => <ResourceLink key={r.url + r.label} r={r} />)}</div>
+    </section>
+  )
+}
+
+function PracticeView() {
+  return (
+    <div className="page">
+      <div className="crumbs"><a href="#/">Home</a> / Practice</div>
+      <h1>Practice platforms</h1>
+      <p className="lead">Reading builds understanding; doing builds skill. These are the free (or free-tier) places to code, run labs and get feedback. Every module also links its own practice problems at the end.</p>
+      <div className="platforms">
+        {PLATFORMS.map((g) => (
+          <section key={g.area} className="panel">
+            <div className="panel-head"><h2>{g.icon} {g.area}</h2></div>
+            <div className="res-grid">{g.items.map((r) => <ResourceLink key={r.url + r.label} r={r} />)}</div>
+          </section>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ---------------- Home ---------------- */
-function Home({ p }) {
-  const done = topics.filter((t) => p.done[t.id]).length
-  const next = ordered.find((t) => !p.done[t.id])
+function Home({ p, prefs, setPrefs }) {
+  const path = pathById[prefs.path] || PATHS[0]
+  const inPath = (trackId) => !path.tracks || path.tracks.includes(trackId)
+  const pathTopics = topics.filter((t) => inPath(t.track))
+  const done = pathTopics.filter((t) => p.done[t.id]).length
+  const next = ordered.find((t) => inPath(t.track) && !p.done[t.id])
   const last = p.last && topicById[p.last]
   const resume = last && !p.done[last.id] ? last : next
   const hour = new Date().getHours()
   const greeting = hour < 5 ? 'Burning the midnight oil' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
-  const week = weekOfPlan(p.startDate)
-  const thisWeek = week ? PLAN_WEEKS[week - 1] : null
+  const planWeeks = prefs.path === 'ai' ? AI_PLAN_WEEKS : PLAN_WEEKS
+  const rawWeek = weekOfPlan(p.startDate)
+  const week = rawWeek ? Math.min(rawWeek, planWeeks.length) : null
+  const thisWeek = week ? planWeeks[week - 1] : null
   const todayMin = Math.round((p.log[dayKey()] || 0) / 60)
 
   return (
@@ -133,19 +181,19 @@ function Home({ p }) {
           <p className="eyebrow">{greeting}</p>
           <h1>{week ? `Week ${week} — ${thisWeek.title}` : 'Your study desk'}</h1>
           <p className="lead">
-            {week ? thisWeek.focus : 'Pick a start date to follow the 20-week plan, or jump into any module below. Small, daily sessions beat weekend marathons.'}
+            {week ? thisWeek.focus : `Pick a start date to follow the ${planWeeks.length}-week plan for your path, or jump into any module below. Small, daily sessions beat weekend marathons.`}
           </p>
           <div className="welcome-actions">
             {resume && <a className="btn primary" href={`#/topic/${resume.id}`}>{last && resume === last ? 'Continue' : 'Start'}: {resume.title} →</a>}
             {!p.startDate
-              ? <button className="btn" onClick={() => p.setStartDate(dayKey())}>Start my 20-week plan today</button>
+              ? <button className="btn" onClick={() => p.setStartDate(dayKey())}>Start my {planWeeks.length}-week plan today</button>
               : <a className="btn" href="#/plan">Open study plan</a>}
           </div>
         </div>
         <div className="stat-grid">
           <div className="stat">
-            <Ring value={done} total={topics.length}><b>{Math.round((done / topics.length) * 100)}%</b></Ring>
-            <div><b>{done}/{topics.length}</b><span>modules done</span></div>
+            <Ring value={done} total={pathTopics.length}><b>{Math.round((done / pathTopics.length) * 100)}%</b></Ring>
+            <div><b>{done}/{pathTopics.length}</b><span>{path.id === 'all' ? 'modules done' : `${path.name} modules`}</span></div>
           </div>
           <div className="stat"><div className="stat-icon">🔥</div><div><b>{streak(p)}</b><span>day streak</span></div></div>
           <div className="stat"><div className="stat-icon">⏱️</div><div><b>{todayMin} min</b><span>studied today</span></div></div>
@@ -166,10 +214,31 @@ function Home({ p }) {
         <Heatmap log={p.log} />
       </section>
 
+      <section className="path-picker">
+        <div>
+          <h2>Choose your path</h2>
+          <p className="muted small">Filters the roadmap, tracks and progress below. Your progress is kept across paths.</p>
+        </div>
+        <div className="path-options">
+          {PATHS.map((pt) => (
+            <button key={pt.id} className={'path-opt' + (path.id === pt.id ? ' on' : '')} onClick={() => setPrefs({ path: pt.id })}>
+              <span className="path-icon">{pt.icon}</span>
+              <span><b>{pt.name}</b><small>{pt.desc}</small></span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <a className="lab-banner" href="#/lab">
+        <span className="lab-banner-icon">🧪</span>
+        <span><b>New: AI Lab</b><small>Play with temperature sampling, train a tokenizer, run a mini RAG search, watch gradient descent and step through an agent loop — all in your browser.</small></span>
+        <span className="lab-banner-go">Open →</span>
+      </a>
+
       <h2 className="section-title">The roadmap</h2>
       <div className="roadmap">
         {LEVELS.map((L) => {
-          const lt = topicsOfLevel(L.n)
+          const lt = topicsOfLevel(L.n).filter((t) => inPath(t.track))
           const ld = lt.filter((t) => p.done[t.id]).length
           return (
             <section key={L.n} className="level">
@@ -182,7 +251,7 @@ function Home({ p }) {
                 <p className="level-goal">{L.goal}</p>
                 <Bar value={ld} total={lt.length} color={`var(--l${L.n})`} />
                 <div className="level-topics">
-                  {TRACKS.map((tr) => {
+                  {TRACKS.filter((tr) => inPath(tr.id)).map((tr) => {
                     const ts = lt.filter((t) => t.track === tr.id)
                     if (!ts.length) return null
                     return (
@@ -201,7 +270,7 @@ function Home({ p }) {
 
       <h2 className="section-title">Tracks</h2>
       <div className="grid">
-        {TRACKS.map((tr) => {
+        {TRACKS.filter((tr) => inPath(tr.id)).map((tr) => {
           const ts = topicsOfTrack(tr.id)
           const d = ts.filter((t) => p.done[t.id]).length
           return (
@@ -348,6 +417,7 @@ function TopicView({ id, p, focus, setFocus }) {
             )}
           </header>
           <Markdown source={t.body} onToc={setToc} />
+          <ResourcesPanel id={t.id} />
           <div className="end-card">
             <h3>Finished reading?</h3>
             <p className="muted">Answer the interview questions out loud before marking complete. Flag it for revision if anything felt shaky.</p>
@@ -401,19 +471,26 @@ function ListView({ kind, p }) {
   )
 }
 
-function PlanView({ p }) {
+function PlanView({ p, prefs }) {
   const page = pages['study-plan']
-  const week = weekOfPlan(p.startDate)
+  const [planId, setPlanId] = useState(prefs.path === 'ai' ? 'ai' : 'java')
+  const plan = PLANS.find((x) => x.id === planId)
+  const rawWeek = weekOfPlan(p.startDate)
+  const week = rawWeek ? Math.min(rawWeek, plan.weeks.length) : null
   return (
     <div className="page narrow">
       <div className="crumbs"><a href="#/">Home</a> / Study plan</div>
       {page && <Markdown source={page.body} />}
       <h2 className="section-title">Week by week</h2>
+      <div className="segs plan-tabs">
+        {PLANS.map((x) => <button key={x.id} className={'seg' + (x.id === planId ? ' on' : '')} onClick={() => setPlanId(x.id)}>{x.name}</button>)}
+      </div>
+      {planId === 'ai' && <p className="muted small">Run the AI plan after the Java plan, or in parallel at about an hour a day once you're past week 8 of the Java plan.</p>}
       {!p.startDate
         ? <p><button className="btn primary" onClick={() => p.setStartDate(dayKey())}>Start the plan today</button> <span className="muted small">— the home page will then show "this week".</span></p>
         : <p className="muted small">Started on {p.startDate} · <button className="linkbtn" onClick={() => p.setStartDate(null)}>reset start date</button></p>}
       <div className="weeks">
-        {PLAN_WEEKS.map((w, i) => {
+        {plan.weeks.map((w, i) => {
           const d = w.modules.filter((id) => p.done[id]).length
           return (
             <section key={i} className={'week' + (week === i + 1 ? ' current' : '')}>
@@ -569,12 +646,14 @@ export default function App() {
 
   let view
   const [a, ...rest] = parts
-  if (!a) view = <Home p={p} />
+  if (!a) view = <Home p={p} prefs={prefs} setPrefs={setPrefs} />
   else if (a === 'track') view = <TrackView id={rest[0]} p={p} />
   else if (a === 'topic') view = <TopicView key={rest.join('/')} id={rest.join('/')} p={p} focus={focus} setFocus={setFocus} />
   else if (a === 'search') view = <SearchView key={query.get('q') || ''} q={query.get('q') || ''} p={p} />
   else if (a === 'revise' || a === 'bookmarks') view = <ListView kind={a} p={p} />
-  else if (a === 'plan') view = <PlanView p={p} />
+  else if (a === 'plan') view = <PlanView p={p} prefs={prefs} />
+  else if (a === 'lab') view = <Lab />
+  else if (a === 'practice') view = <PracticeView />
   else if (a === 'data') view = <DataView p={p} />
   else view = <NotFound />
 
@@ -589,6 +668,8 @@ export default function App() {
         </form>
         <nav className="topnav">
           <a href="#/plan">Plan</a>
+          <a href="#/lab">AI Lab</a>
+          <a href="#/practice">Practice</a>
           <a href="#/revise">Revise{Object.keys(p.revise).length ? ` (${Object.keys(p.revise).length})` : ''}</a>
           <a href="#/bookmarks" title="Bookmarks">★</a>
         </nav>

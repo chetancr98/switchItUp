@@ -1,6 +1,6 @@
 // 20-week (≈ 4.5 month) plan. Each week lists the modules to finish; DSA practice runs daily alongside.
 export const PLAN_WEEKS = [
-  { title: 'Java & tooling foundations', focus: 'How Java runs, core language rules, Big-O, arrays.', modules: ['java/01-jvm-internals', 'java/02-core-language', 'dsa/01-complexity-java-toolkit', 'dsa/02-arrays-two-pointers-sliding-window', 'git/01-git-internals'] },
+  { title: 'Java & tooling foundations', focus: 'How Java runs, core language rules, Big-O, arrays.', modules: ['java/01-jvm-internals', 'java/02-core-language', 'dsa/00-sorting-searching', 'dsa/01-complexity-java-toolkit', 'dsa/02-arrays-two-pointers-sliding-window', 'git/01-git-internals'] },
   { title: 'Collections & JavaScript basics', focus: 'HashMap internals, hashing/stack patterns, the JS event loop.', modules: ['java/03-collections-internals', 'dsa/03-hashing-stacks-queues', 'coding/01-arrays-strings', 'sql/01-sql-fundamentals', 'react/01-javascript-engine'] },
   { title: 'Concurrency & React rendering', focus: 'Threads and the memory model; linked lists & binary search.', modules: ['java/04-concurrency', 'dsa/04-linked-lists-binary-search', 'coding/02-linkedlist-stack-queue', 'sql/02-joins-aggregation-window-functions', 'react/02-rendering-reconciliation'] },
   { title: 'Modern Java & Spring core', focus: 'Streams/records, Spring IoC, trees.', modules: ['java/05-modern-java', 'spring/01-ioc-autoconfig', 'dsa/05-trees-bst', 'coding/05-java-programs'] },
@@ -15,7 +15,7 @@ export const PLAN_WEEKS = [
   { title: 'Performance & releases', focus: 'First design case studies, GC tuning, deployments, React perf.', modules: ['system-design/05-case-url-shortener-rate-limiter', 'java/06-gc-performance', 'devops/04-deployment-strategies-cloud', 'react/05-performance-react19'] },
   { title: 'Design cases & LLD', focus: 'Feed/chat/notifications, number theory, machine coding.', modules: ['system-design/06-case-feed-chat-notifications', 'cp/02-number-theory-combinatorics', 'interview/01-lld-machine-coding'] },
   { title: 'Big designs & your story', focus: 'YouTube/Uber/payments, behavioral stories, resume.', modules: ['system-design/07-case-video-ride-search', 'interview/02-behavioral-leadership', 'interview/03-process-resume-negotiation'] },
-  { title: 'Hard problems & revision', focus: 'Advanced CP techniques; re-read everything in your Revise list.', modules: ['cp/03-advanced-techniques'] },
+  { title: 'Hard problems & revision', focus: 'Advanced CP techniques; re-read everything in your Revise list.', modules: ['cp/03-advanced-techniques', 'dsa/11-algorithms-catalog'] },
   { title: 'Mock interviews I', focus: '3 coding mocks + 2 system design mocks. Apply to 3–4 "practice" companies.', modules: [] },
   { title: 'Mock interviews II', focus: 'LLD timed drills (one per day). Company-tagged problems. Apply to target companies.', modules: [] },
   { title: 'Interview loops', focus: 'Interviews. 2 problems/day to stay sharp. Review each round the same evening.', modules: [] },
@@ -36,7 +36,24 @@ export const AI_PLAN_WEEKS = [
   { title: 'AI interviews', focus: 'AI system design cases and the AI interview question bank; ship one portfolio project.', modules: ['agents/05-ai-system-design-cases', 'agents/06-ai-interview-question-bank'] },
 ]
 
+// Systems Engineer path: 12 weeks for IT / infrastructure / sysadmin / cloud-ops roles.
+export const SYSTEMS_PLAN_WEEKS = [
+  { title: 'How computers & operating systems work', focus: 'Hardware, boot process, processes, memory, file systems. Install a Linux VM (or use a free browser lab).', modules: ['linux/01-os-hardware-fundamentals'] },
+  { title: 'Linux essentials', focus: 'Shell, files, permissions, users, packages. Practise daily in a terminal.', modules: ['linux/02-linux-essentials'] },
+  { title: 'Networking fundamentals', focus: 'OSI/TCP-IP, IP addressing and subnetting by hand, routing, switching, VLANs.', modules: ['networking/01-networking-fundamentals'] },
+  { title: 'Linux administration', focus: 'systemd services, logs, storage/LVM, scheduling, SSH, web servers.', modules: ['linux/03-linux-admin-services-storage'] },
+  { title: 'Network services & security', focus: 'DNS, DHCP, NAT, firewalls, VPN, TLS/PKI, proxies and load balancers.', modules: ['networking/02-network-services-security'] },
+  { title: 'Scripting & automation', focus: 'Bash scripts with error handling, cron, Ansible playbooks; Git for your scripts.', modules: ['linux/04-bash-scripting-automation', 'git/01-git-internals'] },
+  { title: 'Windows Server & Active Directory', focus: 'AD DS, GPOs, DNS/DHCP on Windows, PowerShell, Entra ID (Azure AD).', modules: ['infra/01-windows-server-active-directory'] },
+  { title: 'Virtualization, storage, backup & DR', focus: 'Hypervisors, RAID, SAN/NAS, snapshots vs backups, 3-2-1, RPO/RTO.', modules: ['infra/02-virtualization-storage-backup-dr'] },
+  { title: 'Cloud infrastructure & containers', focus: 'AWS/Azure core services, IAM, VPC networking; Docker basics.', modules: ['infra/03-cloud-infrastructure-aws-azure', 'devops/02-docker'] },
+  { title: 'Security & identity', focus: 'Hardening, patching, least privilege, MFA, PKI, logging/SIEM, incident response.', modules: ['itops/01-security-hardening-identity'] },
+  { title: 'Troubleshooting & operations', focus: 'Network and performance troubleshooting, monitoring, ITIL incident/change/problem management.', modules: ['networking/03-network-troubleshooting', 'linux/05-linux-performance-troubleshooting', 'itops/02-monitoring-itil-incident-management'] },
+  { title: 'Interview mode', focus: 'Scenario drills, behavioral stories, resume; mock troubleshooting interviews with a friend.', modules: ['itops/03-systems-engineer-interview-playbook', 'interview/02-behavioral-leadership', 'interview/03-process-resume-negotiation'] },
+]
+
 export const PLANS = [
   { id: 'java', name: 'Java Full-Stack · 20 weeks', weeks: PLAN_WEEKS },
   { id: 'ai', name: 'AI Engineer · 10 weeks', weeks: AI_PLAN_WEEKS },
+  { id: 'systems', name: 'Systems Engineer · 12 weeks', weeks: SYSTEMS_PLAN_WEEKS },
 ]

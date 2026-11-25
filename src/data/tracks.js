@@ -49,6 +49,10 @@ export const TRACKS = [
   { id: 'python', name: 'Python for AI', icon: '🐍', color: '#3776ab', desc: 'Python from zero for Java developers: idioms, typing, async, FastAPI, NumPy & pandas.' },
   { id: 'ai', name: 'AI & LLM Foundations', icon: '🧬', color: '#c026d3', desc: 'ML from scratch, neural networks, transformers, embeddings & RAG, prompting and evals.' },
   { id: 'agents', name: 'Building AI Agents', icon: '🤖', color: '#ea580c', desc: 'Agent loops and tool use with the Claude API, MCP, memory, multi-agent, production & AI system design.' },
+  { id: 'linux', name: 'Linux & Operating Systems', icon: '🐧', color: '#ca8a04', desc: 'OS & hardware fundamentals, Linux administration, storage, services, Bash scripting, performance troubleshooting.' },
+  { id: 'networking', name: 'Networking', icon: '🌐', color: '#0891b2', desc: 'OSI/TCP-IP, subnetting, routing, DNS/DHCP, firewalls, VPN, TLS, load balancers and network troubleshooting.' },
+  { id: 'infra', name: 'Windows, Cloud & Infrastructure', icon: '🏢', color: '#2563eb', desc: 'Windows Server, Active Directory, PowerShell, virtualization, storage, backup & DR, AWS/Azure infrastructure.' },
+  { id: 'itops', name: 'Security & IT Operations', icon: '🛡️', color: '#be123c', desc: 'Hardening, identity, patching, monitoring, ITIL incident/change management and the systems interview playbook.' },
   { id: 'interview', name: 'Interview Playbook', icon: '🎯', color: '#64748b', desc: 'Hiring process, LLD round, behavioral (STAR), resume and negotiation.' },
 ]
 
@@ -64,6 +68,10 @@ export const PATHS = [
   {
     id: 'ai', name: 'AI Engineer', icon: '🤖', desc: 'Build LLM apps and agents: Python, ML/LLM foundations, RAG, agents, AI system design.',
     tracks: ['python', 'ai', 'agents', 'sql', 'system-design', 'dsa', 'coding', 'git', 'devops', 'interview'],
+  },
+  {
+    id: 'systems', name: 'Systems Engineer', icon: '🖥️', desc: 'IT / infrastructure roles: Linux, networking, Windows & AD, cloud, security and operations.',
+    tracks: ['linux', 'networking', 'infra', 'itops', 'devops', 'git', 'sql', 'interview'],
   },
 ]
 export const pathById = Object.fromEntries(PATHS.map((p) => [p.id, p]))

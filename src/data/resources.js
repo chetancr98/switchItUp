@@ -341,10 +341,98 @@ export const RESOURCES = {
     R('course', 'Hugging Face — AI Agents Course', 'https://huggingface.co/learn/agents-course'),
     R('course', 'Anthropic courses (GitHub)', 'https://github.com/anthropics/courses'),
   ],
+  // ---------- New DSA ----------
+  'dsa/00-sorting-searching': [
+    R('interactive', 'Algorithm Visualizer (this app) — race 10 sorts', '#/visualizer'),
+    R('interactive', 'VisuAlgo — sorting animations', 'https://visualgo.net/en/sorting'),
+    lc('sort-an-array', 'Sort an Array'), lc('sort-colors', 'Sort Colors'), lc('sort-list', 'Sort List'),
+    lc('largest-number', 'Largest Number'), lc('merge-sorted-array', 'Merge Sorted Array'),
+  ],
+  'dsa/11-algorithms-catalog': [
+    lc('cheapest-flights-within-k-stops', 'Cheapest Flights Within K Stops'), lc('min-cost-to-connect-all-points', 'Min Cost to Connect All Points'),
+    lc('critical-connections-in-a-network', 'Critical Connections'), lc('reconstruct-itinerary', 'Reconstruct Itinerary'),
+    lc('is-graph-bipartite', 'Is Graph Bipartite?'), lc('shuffle-an-array', 'Shuffle an Array'), lc('linked-list-random-node', 'Linked List Random Node'),
+    R('read', 'cp-algorithms — graphs & strings', 'https://cp-algorithms.com/'),
+  ],
+
+  // ---------- Systems Engineer ----------
+  'linux/01-os-hardware-fundamentals': [
+    R('course', 'Linux Journey — free beginner lessons', 'https://linuxjourney.com/'),
+    R('interactive', 'Killercoda — free Linux playgrounds', 'https://killercoda.com/'),
+  ],
+  'linux/02-linux-essentials': [
+    R('interactive', 'OverTheWire Bandit — learn the shell by playing', 'https://overthewire.org/wargames/bandit/'),
+    R('interactive', 'explainshell — see what each part of a command does', 'https://explainshell.com/'),
+    R('course', 'Linux Journey', 'https://linuxjourney.com/'),
+  ],
+  'linux/03-linux-admin-services-storage': [
+    R('interactive', 'Killercoda — Linux scenarios', 'https://killercoda.com/'),
+    R('docs', 'Red Hat Enterprise Linux documentation', 'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/'),
+  ],
+  'linux/04-bash-scripting-automation': [
+    R('interactive', 'ShellCheck — find bugs in shell scripts', 'https://www.shellcheck.net/'),
+    R('docs', 'Ansible documentation', 'https://docs.ansible.com/'),
+    R('practice', 'Exercism — Bash track', 'https://exercism.org/tracks/bash'),
+  ],
+  'linux/05-linux-performance-troubleshooting': [
+    R('read', 'Brendan Gregg — Linux performance', 'https://www.brendangregg.com/linuxperf.html'),
+    R('read', 'Wizard Zines — illustrated Linux and networking', 'https://wizardzines.com/'),
+  ],
+  'networking/01-networking-fundamentals': [
+    R('practice', 'Subnetting practice', 'https://subnettingpractice.com/'),
+    R('course', 'Cisco Networking Academy (free courses, Packet Tracer)', 'https://www.netacad.com/'),
+  ],
+  'networking/02-network-services-security': [
+    R('read', 'Cloudflare Learning Center — DNS, TLS, DDoS explained', 'https://www.cloudflare.com/learning/'),
+    R('interactive', 'SSL Labs — test a website TLS setup', 'https://www.ssllabs.com/ssltest/'),
+  ],
+  'networking/03-network-troubleshooting': [
+    R('docs', 'Wireshark documentation', 'https://www.wireshark.org/docs/'),
+    R('read', 'Wizard Zines — networking comics', 'https://wizardzines.com/'),
+  ],
+  'infra/01-windows-server-active-directory': [
+    R('course', 'Microsoft Learn — free training paths', 'https://learn.microsoft.com/en-us/training/'),
+    R('docs', 'PowerShell documentation', 'https://learn.microsoft.com/en-us/powershell/'),
+    R('docs', 'Windows Server documentation', 'https://learn.microsoft.com/en-us/windows-server/'),
+  ],
+  'infra/02-virtualization-storage-backup-dr': [
+    R('docs', 'Hyper-V on Windows Server', 'https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/hyper-v-overview'),
+    R('practice', 'Proxmox VE — free hypervisor for a home lab', 'https://www.proxmox.com/en/'),
+  ],
+  'infra/03-cloud-infrastructure-aws-azure': [
+    R('course', 'AWS Skill Builder (free digital training)', 'https://skillbuilder.aws/'),
+    R('course', 'Microsoft Learn — Azure Administrator (AZ-104)', 'https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/'),
+    R('docs', 'Amazon VPC documentation', 'https://docs.aws.amazon.com/vpc/'),
+  ],
+  'itops/01-security-hardening-identity': [
+    R('read', 'CIS Benchmarks', 'https://www.cisecurity.org/cis-benchmarks'),
+    R('read', 'CISA Known Exploited Vulnerabilities catalog', 'https://www.cisa.gov/known-exploited-vulnerabilities-catalog'),
+    R('interactive', 'TryHackMe — hands-on security labs', 'https://tryhackme.com/'),
+  ],
+  'itops/02-monitoring-itil-incident-management': [
+    R('read', 'Google SRE book — Monitoring distributed systems', 'https://sre.google/sre-book/monitoring-distributed-systems/'),
+    R('interactive', 'Grafana Play — live demo dashboards', 'https://play.grafana.org/'),
+    R('docs', 'Prometheus — overview', 'https://prometheus.io/docs/introduction/overview/'),
+  ],
+  'itops/03-systems-engineer-interview-playbook': [
+    R('interactive', 'OverTheWire Bandit', 'https://overthewire.org/wargames/bandit/'),
+    R('interactive', 'Killercoda — practise live tasks', 'https://killercoda.com/'),
+    R('course', 'Microsoft Learn', 'https://learn.microsoft.com/en-us/training/'),
+  ],
 }
 
 // Platforms grouped for the Practice page.
 export const PLATFORMS = [
+  {
+    area: 'Systems & infrastructure (free labs)', icon: '🖥️', items: [
+      R('interactive', 'OverTheWire Bandit — shell skills as a game', 'https://overthewire.org/wargames/bandit/'),
+      R('course', 'Linux Journey', 'https://linuxjourney.com/'),
+      R('practice', 'Subnetting practice', 'https://subnettingpractice.com/'),
+      R('course', 'Microsoft Learn — Windows, Azure, M365', 'https://learn.microsoft.com/en-us/training/'),
+      R('course', 'AWS Skill Builder', 'https://skillbuilder.aws/'),
+      R('interactive', 'TryHackMe — security labs', 'https://tryhackme.com/'),
+    ],
+  },
   {
     area: 'Coding interviews (DSA)', icon: '🧠', items: [
       R('practice', 'LeetCode — Top Interview 150', 'https://leetcode.com/studyplan/top-interview-150/'),

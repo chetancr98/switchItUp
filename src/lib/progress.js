@@ -1,6 +1,26 @@
 import { useCallback, useEffect, useState } from 'react'
 
-const KEY = 'switchitup.progress.v1'
+/* ---------------- learner profiles ----------------
+   Each profile keeps its own progress & preferences in this browser.
+   The original single-user data stays under the 'me' profile (unchanged keys). */
+const PROFILES_KEY = 'switchitup.profiles.v1'
+const defaultProfiles = () => ({ active: 'me', list: [{ id: 'me', name: 'Me', color: '#6366f1' }] })
+
+export function getProfiles() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PROFILES_KEY))
+    return p?.list?.length ? p : defaultProfiles()
+  } catch {
+    return defaultProfiles()
+  }
+}
+export function saveProfiles(p) {
+  try { localStorage.setItem(PROFILES_KEY, JSON.stringify(p)) } catch { /* storage unavailable */ }
+}
+const ACTIVE = getProfiles().active
+const suffix = ACTIVE === 'me' ? '' : '.' + ACTIVE
+
+const KEY = 'switchitup.progress.v1' + suffix
 
 const empty = () => ({ done: {}, bookmarks: {}, notes: {}, revise: {}, log: {}, pomo: {}, last: null, startDate: null })
 
@@ -80,7 +100,7 @@ export function streak(p) {
 }
 
 /* ---------------- reading preferences ---------------- */
-const PKEY = 'switchitup.prefs.v1'
+const PKEY = 'switchitup.prefs.v1' + suffix
 const defaultPrefs = { theme: 'auto', font: 'serif', size: 18, width: 'normal', path: 'all' }
 let prefs = (() => { try { return { ...defaultPrefs, ...JSON.parse(localStorage.getItem(PKEY)) } } catch { return defaultPrefs } })()
 const prefListeners = new Set()

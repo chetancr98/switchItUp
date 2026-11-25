@@ -3,6 +3,17 @@ import { LEVELS, TRACKS, trackById, PATHS, pathById } from './data/tracks'
 import { PLAN_WEEKS, AI_PLAN_WEEKS, PLANS } from './data/plan'
 import { RESOURCES, PLATFORMS } from './data/resources'
 import Lab from './components/Lab'
+import Visualizer from './components/Visualizer'
+import Logo from './components/Logo'
+import { SystemsRole } from './components/RolePage'
+import { Profiles } from './components/Profiles'
+import { celebrate } from './lib/celebrate'
+
+// Toggle completion; celebrate when a module becomes complete.
+function completeToggle(p, id, e) {
+  if (!p.done[id]) celebrate(e)
+  p.toggle('done', id)
+}
 import { topics, topicById, topicsOfTrack, topicsOfLevel, pages, search } from './lib/content'
 import { useProgress, usePrefs, streak, dayKey } from './lib/progress'
 import Markdown from './components/Markdown'
@@ -80,7 +91,7 @@ function TopicRow({ t, p, showTrack }) {
   return (
     <a className={'topic-row' + (p.done[t.id] ? ' is-done' : '')} href={`#/topic/${t.id}`}>
       <button className={'check' + (p.done[t.id] ? ' on' : '')} aria-label="Mark complete"
-        onClick={(e) => { e.preventDefault(); p.toggle('done', t.id) }}>{p.done[t.id] ? '✓' : ''}</button>
+        onClick={(e) => { e.preventDefault(); completeToggle(p, t.id, e) }}>{p.done[t.id] ? '✓' : ''}</button>
       <span className="topic-row-title">{showTrack && <span className="muted">{tr?.icon} </span>}{t.title}</span>
       <span className="topic-row-meta">
         {p.revise[t.id] && <span className="pill warn">revise</span>}
@@ -120,7 +131,7 @@ function Heatmap({ log }) {
 const KIND_ICON = { practice: '🏋️', interactive: '🧪', docs: '📘', read: '📖', video: '🎬', course: '🎓' }
 function ResourceLink({ r }) {
   return (
-    <a className="res" href={r.url} target="_blank" rel="noopener noreferrer">
+    <a className="res" href={r.url} {...(r.url.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>
       <span className="res-icon">{KIND_ICON[r.kind] || '🔗'}</span>
       <span className="res-label">{r.label}</span>
       <span className="res-kind">{r.kind}</span>
@@ -164,11 +175,12 @@ function Home({ p, prefs, setPrefs }) {
   const pathTopics = topics.filter((t) => inPath(t.track))
   const done = pathTopics.filter((t) => p.done[t.id]).length
   const next = ordered.find((t) => inPath(t.track) && !p.done[t.id])
+  const currentLevel = next?.level
   const last = p.last && topicById[p.last]
   const resume = last && !p.done[last.id] ? last : next
   const hour = new Date().getHours()
   const greeting = hour < 5 ? 'Burning the midnight oil' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
-  const planWeeks = prefs.path === 'ai' ? AI_PLAN_WEEKS : PLAN_WEEKS
+  const planWeeks = (PLANS.find((x) => x.id === prefs.path) || PLANS[0]).weeks
   const rawWeek = weekOfPlan(p.startDate)
   const week = rawWeek ? Math.min(rawWeek, planWeeks.length) : null
   const thisWeek = week ? planWeeks[week - 1] : null
@@ -195,7 +207,7 @@ function Home({ p, prefs, setPrefs }) {
             <Ring value={done} total={pathTopics.length}><b>{Math.round((done / pathTopics.length) * 100)}%</b></Ring>
             <div><b>{done}/{pathTopics.length}</b><span>{path.id === 'all' ? 'modules done' : `${path.name} modules`}</span></div>
           </div>
-          <div className="stat"><div className="stat-icon">🔥</div><div><b>{streak(p)}</b><span>day streak</span></div></div>
+          <div className="stat"><div className="stat-icon"><span className="flame">🔥</span></div><div><b>{streak(p)}</b><span>day streak</span></div></div>
           <div className="stat"><div className="stat-icon">⏱️</div><div><b>{todayMin} min</b><span>studied today</span></div></div>
           <div className="stat"><div className="stat-icon">🍅</div><div><b>{p.pomo[dayKey()] || 0}</b><span>focus sessions today</span></div></div>
         </div>
@@ -229,23 +241,36 @@ function Home({ p, prefs, setPrefs }) {
         </div>
       </section>
 
-      <a className="lab-banner" href="#/lab">
-        <span className="lab-banner-icon">🧪</span>
-        <span><b>New: AI Lab</b><small>Play with temperature sampling, train a tokenizer, run a mini RAG search, watch gradient descent and step through an agent loop — all in your browser.</small></span>
-        <span className="lab-banner-go">Open →</span>
-      </a>
+      <div className="banner-row">
+        <a className="lab-banner" href="#/lab">
+          <span className="lab-banner-icon">🧪</span>
+          <span><b>AI Lab</b><small>Temperature sampling, a tokenizer you train, mini RAG, gradient descent and an agent loop — live in your browser.</small></span>
+          <span className="lab-banner-go">Open →</span>
+        </a>
+        <a className="lab-banner viz" href="#/visualizer">
+          <span className="lab-banner-icon">📊</span>
+          <span><b>Algorithm Visualizer</b><small>Watch 10 sorting algorithms race, and BFS, DFS, Dijkstra and A* find paths through a maze.</small></span>
+          <span className="lab-banner-go">Open →</span>
+        </a>
+        <a className="lab-banner role" href="#/systems">
+          <span className="lab-banner-icon">🖥️</span>
+          <span><b>Systems Engineer role</b><small>Linux, networking, Windows & AD, cloud infrastructure, security and IT operations — basics to expert.</small></span>
+          <span className="lab-banner-go">Open →</span>
+        </a>
+      </div>
 
       <h2 className="section-title">The roadmap</h2>
       <div className="roadmap">
         {LEVELS.map((L) => {
           const lt = topicsOfLevel(L.n).filter((t) => inPath(t.track))
           const ld = lt.filter((t) => p.done[t.id]).length
+          const isCurrent = L.n === currentLevel
           return (
-            <section key={L.n} className="level">
+            <section key={L.n} className={'level' + (isCurrent ? ' current' : '')}>
               <div className="level-rail"><span className={`level-dot lvl-${L.n}`}>{ld === lt.length && lt.length ? '✓' : L.n}</span></div>
               <div className="level-body">
                 <div className="level-head">
-                  <div><h3>Level {L.n} · {L.name}</h3><p className="muted">{L.tagline}</p></div>
+                  <div><h3>Level {L.n} · {L.name}{isCurrent && <span className="up-next">up next</span>}</h3><p className="muted">{L.tagline}</p></div>
                   <span className="muted small">{ld}/{lt.length}</span>
                 </div>
                 <p className="level-goal">{L.goal}</p>
@@ -269,12 +294,12 @@ function Home({ p, prefs, setPrefs }) {
       </div>
 
       <h2 className="section-title">Tracks</h2>
-      <div className="grid">
-        {TRACKS.filter((tr) => inPath(tr.id)).map((tr) => {
+      <div className="grid stagger">
+        {TRACKS.filter((tr) => inPath(tr.id)).map((tr, i) => {
           const ts = topicsOfTrack(tr.id)
           const d = ts.filter((t) => p.done[t.id]).length
           return (
-            <a key={tr.id} className="card" href={`#/track/${tr.id}`} style={{ '--c': tr.color }}>
+            <a key={tr.id} className="card" href={`#/track/${tr.id}`} style={{ '--c': tr.color, '--i': i }}>
               <div className="card-top">
                 <div className="card-icon">{tr.icon}</div>
                 <Ring value={d} total={ts.length} size={42} stroke={4} color={tr.color}><span className="small">{d}/{ts.length}</span></Ring>
@@ -376,7 +401,7 @@ function TopicView({ id, p, focus, setFocus }) {
   const next = siblings[i + 1]
   const actions = (
     <div className="topic-actions">
-      <button className={'btn ' + (p.done[t.id] ? 'success' : 'primary')} onClick={() => p.toggle('done', t.id)}>
+      <button className={'btn ' + (p.done[t.id] ? 'success' : 'primary')} onClick={(e) => completeToggle(p, t.id, e)}>
         {p.done[t.id] ? '✓ Completed' : 'Mark complete'}
       </button>
       <button className={'btn' + (p.revise[t.id] ? ' warn' : '')} onClick={() => p.toggle('revise', t.id)}>
@@ -473,7 +498,7 @@ function ListView({ kind, p }) {
 
 function PlanView({ p, prefs }) {
   const page = pages['study-plan']
-  const [planId, setPlanId] = useState(prefs.path === 'ai' ? 'ai' : 'java')
+  const [planId, setPlanId] = useState(PLANS.some((x) => x.id === prefs.path) ? prefs.path : 'java')
   const plan = PLANS.find((x) => x.id === planId)
   const rawWeek = weekOfPlan(p.startDate)
   const week = rawWeek ? Math.min(rawWeek, plan.weeks.length) : null
@@ -485,6 +510,7 @@ function PlanView({ p, prefs }) {
       <div className="segs plan-tabs">
         {PLANS.map((x) => <button key={x.id} className={'seg' + (x.id === planId ? ' on' : '')} onClick={() => setPlanId(x.id)}>{x.name}</button>)}
       </div>
+      {planId === 'systems' && <p className="muted small">Built for IT / infrastructure / systems engineer roles. Overview of the role and interview rounds: <a href="#/systems">Systems Engineer page</a>.</p>}
       {planId === 'ai' && <p className="muted small">Run the AI plan after the Java plan, or in parallel at about an hour a day once you're past week 8 of the Java plan.</p>}
       {!p.startDate
         ? <p><button className="btn primary" onClick={() => p.setStartDate(dayKey())}>Start the plan today</button> <span className="muted small">— the home page will then show "this week".</span></p>
@@ -654,6 +680,8 @@ export default function App() {
   else if (a === 'plan') view = <PlanView p={p} prefs={prefs} />
   else if (a === 'lab') view = <Lab />
   else if (a === 'practice') view = <PracticeView />
+  else if (a === 'visualizer') view = <Visualizer />
+  else if (a === 'systems') view = <SystemsRole p={p} prefs={prefs} setPrefs={setPrefs} TopicRow={TopicRow} />
   else if (a === 'data') view = <DataView p={p} />
   else view = <NotFound />
 
@@ -661,7 +689,7 @@ export default function App() {
   return (
     <>
       <header className={'topbar' + (focus && inTopic ? ' dim' : '')}>
-        <a href="#/" className="brand"><span className="brand-mark">S</span><b>SwitchItUp</b></a>
+        <a href="#/" className="brand" aria-label="SwitchItUp home"><Logo size={26} /><b className="brand-text">SwitchItUp</b></a>
         <form className="topsearch" onSubmit={(e) => { e.preventDefault(); go('#/search?q=' + encodeURIComponent(q)) }}>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search all modules…" />
           <kbd>/</kbd>
@@ -669,14 +697,16 @@ export default function App() {
         <nav className="topnav">
           <a href="#/plan">Plan</a>
           <a href="#/lab">AI Lab</a>
+          <a href="#/visualizer">Visualizer</a>
           <a href="#/practice">Practice</a>
           <a href="#/revise">Revise{Object.keys(p.revise).length ? ` (${Object.keys(p.revise).length})` : ''}</a>
           <a href="#/bookmarks" title="Bookmarks">★</a>
         </nav>
         <Pomodoro onFocusDone={onFocusDone} />
+        <Profiles />
         <Settings prefs={prefs} setPrefs={setPrefs} />
       </header>
-      {view}
+      <div key={parts.join('/')} className="route-anim">{view}</div>
     </>
   )
 }
